@@ -1,0 +1,144 @@
+[
+  {
+    "id": "7460521e-2e90-4532-8c67-be44b14d6443",
+    "createdAt": "2026-03-12T09:34:09.835Z",
+    "source": "landing",
+    "status": "EN COURS",
+    "assignedTo": "Symbolly Admin",
+    "contact": {
+      "nom": "Belmont",
+      "prenom": "Lucas",
+      "telephone": "07 78 98 89 89",
+      "autreTelephone": "",
+      "mobile": "",
+      "email": "lucasbelmont@gmail.com",
+      "adresse": "",
+      "codePostal": "75012",
+      "ville": ""
+    },
+    "qualification": {
+      "situationFamiliale": "",
+      "enfantsACharge": "",
+      "situationPro": "",
+      "revenuMensuel": "",
+      "situationProConjoint": "",
+      "revenuConjoint": "",
+      "age": "",
+      "ageConjoint": "",
+      "creditsEnCours": "",
+      "montantCredits": "",
+      "primeANAH": ""
+    },
+    "pompeAChaleur": {
+      "proprietaire": "proprietaire",
+      "proprietaireDepuis": "",
+      "maisonPlusDe2Ans": "",
+      "surface": "",
+      "modeChauffage": "electricite",
+      "marqueChauffage": "",
+      "modeleChauffage": "",
+      "chaudiereType": "",
+      "eauChaudeSanitaire": "",
+      "consommationAnnuelle": "230",
+      "observation": ""
+    },
+    "panneauxPhotovoltaiques": {
+      "maisonPlusDe2Ans": "",
+      "proprietaireDepuis": "",
+      "surface": "",
+      "compteurType": "",
+      "modeChauffage": "electricite",
+      "eauChaudeSanitaire": "",
+      "consommationAnnuelle": "230",
+      "comblesType": "",
+      "vmc": "",
+      "surfaceToiture": "",
+      "observation": ""
+    },
+    "rendezVous": {
+      "date": "2026-03-12",
+      "heure": "10:50",
+      "pour": "",
+      "statut": "confirmé"
+    },
+    "commentaires": [
+      {
+        "date": "2026-03-12T09:34:09.835Z",
+        "auteur": "Système",
+        "texte": "📋 Formulaire landing — réponses :\n• Déjà équipé panneaux : oui\n• Type habitation : maison\n• Statut : proprietaire\n• Chauffage : electricite\n• Facture mensuelle : 230 €\n• Subvention en cours : non"
+      }
+    ],
+    "piecesJointes": []
+  },
+  {
+    "id": "8f3d5843-978a-4d93-bd1a-80b8155add11",
+    "createdAt": "2026-03-12T08:53:59.534Z",
+    "source": "landing",
+    "status": "À TRAITER",
+    "assignedTo": "",
+    "contact": {
+      "nom": "Dupont",
+      "prenom": "jean",
+      "telephone": "0678778777",
+      "autreTelephone": "",
+      "mobile": "",
+      "email": "jeanddupont@gmail.com",
+      "adresse": "",
+      "codePostal": "75012",
+      "ville": ""
+    },
+    "qualification": {
+      "situationFamiliale": "Célibataire",
+      "enfantsACharge": "",
+      "situationPro": "Salarié(e)",
+      "revenuMensuel": "",
+      "situationProConjoint": "Fonctionnaire",
+      "revenuConjoint": "",
+      "age": "",
+      "ageConjoint": "",
+      "creditsEnCours": "Non",
+      "montantCredits": "",
+      "primeANAH": "Ne sais pas"
+    },
+    "pompeAChaleur": {
+      "proprietaire": "proprietaire",
+      "proprietaireDepuis": "",
+      "maisonPlusDe2Ans": "Oui",
+      "surface": "",
+      "modeChauffage": "Électricité",
+      "marqueChauffage": "",
+      "modeleChauffage": "",
+      "chaudiereType": "Classique",
+      "eauChaudeSanitaire": "Gaz",
+      "consommationAnnuelle": "250",
+      "observation": ""
+    },
+    "panneauxPhotovoltaiques": {
+      "maisonPlusDe2Ans": "Oui",
+      "proprietaireDepuis": "",
+      "surface": "",
+      "compteurType": "Linky",
+      "modeChauffage": "Électricité",
+      "eauChaudeSanitaire": "Gaz",
+      "consommationAnnuelle": "250",
+      "comblesType": "Rampants",
+      "vmc": "Non",
+      "surfaceToiture": "",
+      "observation": ""
+    },
+    "rendezVous": {
+      "date": "2026-03-13",
+      "heure": "10:00",
+      "pour": "",
+      "statut": "confirmé"
+    },
+    "commentaires": [
+      {
+        "date": "2026-03-12T08:53:59.534Z",
+        "auteur": "Système",
+        "texte": "📋 Formulaire landing — réponses :\n• Déjà équipé panneaux : non\n• Type habitation : maison\n• Statut : proprietaire\n• Chauffage : electricite\n• Facture mensuelle : 250 €\n• Subvention en cours : non"
+      }
+    ],
+    "piecesJointes": []
+  }
+]

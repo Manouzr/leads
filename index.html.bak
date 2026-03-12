@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>France Rénove — Votre projet solaire clé en main</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%23000091'/><path d='M8 22V14l8-6 8 6v8H8z' fill='none' stroke='%23facc15' stroke-width='2'/><circle cx='16' cy='10' r='3' fill='none' stroke='%23fff' stroke-width='1.5'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bleu-france:#000091;--bleu-france-light:#ececfe;--bleu-france-hover:#1212ff;
+  --red-marianne:#e1000f;
+  --bg:#ffffff;--bg-alt:#f6f6f6;--bg-alt2:#eee;
+  --text-title:#161616;--text-body:#3a3a3a;--text-mention:#666;--text-light:#929292;
+  --border:#e5e5e5;--border-light:#ddd;
+  --green-valid:#18753c;--green-bg:#b8fec9;
+  --shadow:0 2px 6px rgba(0,0,0,.04);
+  --shadow-lg:0 6px 18px rgba(0,0,0,.07);
+  --radius:8px;--radius-sm:4px;
+}
+html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text-body);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* === GOV HEADER === */
+.gov-header{background:var(--bg);border-bottom:1px solid var(--border);position:fixed;top:0;left:0;right:0;z-index:200;transition:box-shadow .3s}
+.gov-header.scrolled{box-shadow:var(--shadow-lg)}
+.gov-header-inner{max-width:1140px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:12px 24px;gap:20px}
+.gov-brand{display:flex;align-items:center;gap:16px;text-decoration:none}
+.gov-brand-logo{height:56px;width:auto;flex-shrink:0}
+.gov-brand-sep{width:1px;height:44px;background:var(--border);flex-shrink:0}
+.gov-service{display:flex;flex-direction:column;gap:1px}
+.gov-service-name{font-size:1.15rem;font-weight:800;color:var(--text-title);letter-spacing:-.3px;line-height:1.2}
+.gov-service-name span{color:var(--bleu-france)}
+.gov-service-tagline{font-size:.72rem;color:var(--text-mention);font-weight:500}
+.gov-cta{background:var(--bleu-france);color:#fff;border:none;padding:10px 22px;border-radius:4px;font-family:inherit;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .2s;text-decoration:none;white-space:nowrap}
+.gov-cta:hover{background:var(--bleu-france-hover)}
+
+/* === HERO === */
+.hero{position:relative;min-height:92vh;min-height:92dvh;display:flex;align-items:center;overflow:hidden;background:#f0f0f0}
+.hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.35}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.5) 0%,rgba(255,255,255,.85) 50%,var(--bg) 100%)}
+.hero-content{position:relative;z-index:2;max-width:1140px;margin:0 auto;padding:140px 24px 60px;width:100%}
+.hero-badge{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--bleu-france);background:var(--bleu-france-light);padding:6px 16px;border-radius:50px;font-size:.78rem;font-weight:600;color:var(--bleu-france);margin-bottom:24px}
+.hero-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green-valid);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{font-size:clamp(2rem,5vw,3rem);font-weight:800;line-height:1.2;letter-spacing:-.5px;max-width:650px;margin-bottom:18px;color:var(--text-title)}
+.hero h1 .hl{color:var(--bleu-france)}
+.hero-sub{font-size:1.05rem;color:var(--text-body);line-height:1.7;max-width:520px;margin-bottom:36px}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap}
+.hero-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 30px;border-radius:4px;font-family:inherit;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .2s;border:none;text-decoration:none}
+.hero-btn.primary{background:var(--bleu-france);color:#fff;box-shadow:0 4px 16px rgba(0,0,145,.15)}
+.hero-btn.primary:hover{background:var(--bleu-france-hover);transform:translateY(-1px)}
+.hero-btn.secondary{background:#fff;color:var(--bleu-france);border:1px solid var(--bleu-france)}
+.hero-btn.secondary:hover{background:var(--bleu-france-light)}
+.hero-stats{display:flex;gap:48px;margin-top:50px;padding-top:30px;border-top:2px solid var(--border)}
+.hero-stat-num{font-size:1.8rem;font-weight:800;color:var(--text-title)}
+.hero-stat-num span{color:var(--bleu-france)}
+.hero-stat-label{font-size:.78rem;color:var(--text-mention);margin-top:2px;font-weight:500}
+
+/* === TIMELINE === */
+.timeline-section{padding:80px 24px;background:var(--bg)}
+.timeline-section .container{max-width:1140px;margin:0 auto}
+.tl-header{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start}
+.tl-left h2{font-size:clamp(1.6rem,3.5vw,2.2rem);font-weight:800;line-height:1.2;letter-spacing:-.3px;color:var(--text-title)}
+.tl-left p{color:var(--text-body);margin-top:16px;font-size:1rem;line-height:1.7;max-width:400px}
+.tl-right{position:relative;padding-left:40px}
+.tl-line{position:absolute;left:14px;top:0;bottom:0;width:2px;background:var(--border)}
+.tl-line-fill{position:absolute;left:14px;top:0;width:2px;background:linear-gradient(180deg,var(--bleu-france),var(--green-valid));height:0%;transition:height .1s linear;border-radius:1px}
+.tl-step{position:relative;padding-bottom:48px}
+.tl-step:last-child{padding-bottom:0}
+.tl-dot{position:absolute;left:-40px;top:2px;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;transition:all .4s;z-index:2}
+.tl-dot.pending{background:var(--bg-alt2);color:var(--text-light);border:2px solid var(--border)}
+.tl-dot.active{background:var(--bleu-france);color:#fff;border:2px solid var(--bleu-france);box-shadow:0 0 16px rgba(0,0,145,.2)}
+.tl-dot.done{background:var(--green-valid);color:white;border:2px solid var(--green-valid)}
+.tl-dot.done svg{width:14px;height:14px}
+.tl-step h3{font-size:1.05rem;font-weight:700;color:var(--text-title);margin-bottom:8px;transition:color .3s}
+.tl-step.dim h3{color:var(--text-light)}
+.tl-step p{font-size:.88rem;color:var(--text-body);line-height:1.6;max-width:400px;transition:color .3s}
+.tl-step.dim p{color:var(--text-light)}
+.tl-cta{margin-top:40px;padding-left:40px}
+.tl-cta-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:var(--bleu-france);color:#fff;border:none;border-radius:4px;font-family:inherit;font-size:.9rem;font-weight:700;cursor:pointer;transition:all .2s;text-decoration:none}
+.tl-cta-btn:hover{background:var(--bleu-france-hover);transform:translateY(-1px)}
+
+/* === FORM === */
+.form-section{padding:40px 24px 80px;background:var(--bg-alt)}
+.form-section::before{content:'';display:block;height:1px;background:var(--border);margin-bottom:0;position:relative;top:-40px}
+.form-container{max-width:560px;margin:0 auto}
+.form-header{text-align:center;margin-bottom:28px}
+.form-header h2{font-size:clamp(1.4rem,3vw,1.8rem);font-weight:800;letter-spacing:-.3px;color:var(--text-title)}
+.form-header h2 .hl{color:var(--bleu-france)}
+.form-header p{color:var(--text-mention);margin-top:8px;font-size:.9rem}
+.f-progress{margin-bottom:20px}
+.f-progress-info{display:flex;justify-content:space-between;margin-bottom:8px}
+.f-progress-info span{font-size:.78rem;font-weight:600;color:var(--text-mention)}
+.f-progress-info .pct{color:var(--bleu-france)}
+.f-track{height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.f-fill{height:100%;background:linear-gradient(90deg,var(--bleu-france),var(--green-valid));border-radius:2px;transition:width .45s cubic-bezier(.4,0,.2,1)}
+.fc{background:#fff;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.fc-top{padding:22px 24px 18px;border-bottom:1px solid var(--border-light)}
+.fc-badge{display:inline-block;background:var(--bleu-france-light);color:var(--bleu-france);padding:3px 12px;border-radius:50px;font-size:.7rem;font-weight:700;letter-spacing:.5px;margin-bottom:10px}
+.fc-title-row{display:flex;align-items:flex-start;gap:12px}
+.fc-emoji{font-size:24px;flex-shrink:0}
+.fc-title{font-size:1.1rem;font-weight:700;color:var(--text-title);line-height:1.35}
+.fc-sub{font-size:.8rem;color:var(--text-mention);margin-top:4px}
+.fc-body{padding:20px 24px 24px}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opts.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.op{display:flex;align-items:center;gap:10px;padding:14px 16px;border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;position:relative;background:#fff}
+.op:active{transform:scale(.98)}
+.op:hover{border-color:var(--bleu-france);background:var(--bleu-france-light)}
+.op.sel{border-color:var(--green-valid);background:rgba(24,117,60,.06)}
+.op.sel .op-ck{opacity:1;transform:scale(1)}
+.op-i{font-size:20px;flex-shrink:0}
+.op-t{font-size:.88rem;font-weight:600;color:var(--text-title);line-height:1.3}
+.op-ck{position:absolute;top:8px;right:8px;width:20px;height:20px;background:var(--green-valid);border-radius:50%;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.4);transition:all .2s}
+.op-ck svg{width:12px;height:12px;color:white}
+.blk{text-align:center;padding:16px 0}
+.blk-i{font-size:44px;margin-bottom:14px}
+.blk h4{font-size:1.05rem;font-weight:700;margin-bottom:8px;color:var(--text-title)}
+.blk p{font-size:.85rem;color:var(--text-body);line-height:1.6;max-width:340px;margin:0 auto}
+.blk-btn{display:inline-flex;align-items:center;gap:6px;margin-top:16px;padding:10px 22px;background:var(--bg-alt);color:var(--text-body);border:1px solid var(--border);border-radius:4px;font-family:inherit;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s}
+.blk-btn:hover{background:var(--bleu-france);color:#fff;border-color:var(--bleu-france)}
+.fd{margin-bottom:12px}
+.fd label{display:block;font-size:.8rem;color:var(--text-mention);font-weight:600;margin-bottom:5px}
+.fi{width:100%;padding:12px 16px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:.92rem;color:var(--text-title);background:#fff;transition:border-color .2s;appearance:none;-webkit-appearance:none}
+.fi:focus{outline:none;border-color:var(--bleu-france);box-shadow:0 0 0 3px rgba(0,0,145,.1)}
+.fi::placeholder{color:var(--text-light)}
+.fd-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fd-sfx{position:relative}
+.fd-sfx .fi{padding-right:56px}
+.fd-sfx span{position:absolute;right:16px;bottom:13px;color:var(--text-mention);font-weight:700;font-size:.85rem;pointer-events:none}
+.fc-nav{display:flex;justify-content:space-between;align-items:center;padding:14px 24px;border-top:1px solid var(--border-light);background:var(--bg-alt)}
+.bn-back{display:flex;align-items:center;gap:4px;background:none;border:none;color:var(--text-mention);font-family:inherit;font-size:.85rem;cursor:pointer;padding:10px 12px;border-radius:4px;transition:all .15s;font-weight:600}
+.bn-back:hover{color:var(--text-title);background:var(--bg-alt2)}
+.bn-next{display:flex;align-items:center;gap:7px;background:var(--bleu-france);color:#fff;border:none;padding:11px 24px;border-radius:4px;font-family:inherit;font-size:.88rem;font-weight:700;cursor:pointer;transition:all .2s}
+.bn-next:hover:not(:disabled){background:var(--bleu-france-hover);transform:translateY(-1px)}
+.bn-next:disabled{opacity:.3;cursor:not-allowed;transform:none}
+.bn-next:active:not(:disabled){transform:scale(.97)}
+.bn-sub{background:var(--bleu-france)}
+.bn-sub:hover:not(:disabled){background:var(--bleu-france-hover)}
+.suc{text-align:center;padding:20px 0}
+.suc-ck{width:60px;height:60px;border-radius:50%;background:rgba(24,117,60,.08);border:2px solid var(--green-valid);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;animation:scIn .4s cubic-bezier(.175,.885,.32,1.275)}
+.suc-ck svg{width:28px;height:28px;color:var(--green-valid)}
+.suc h3{font-size:1.2rem;font-weight:800;margin-bottom:8px;color:var(--text-title)}
+.suc p{font-size:.88rem;color:var(--text-body);line-height:1.6;max-width:360px;margin:0 auto}
+.suc-bd{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+.suc-b{display:flex;align-items:center;gap:4px;padding:5px 12px;background:rgba(24,117,60,.06);border:1px solid rgba(24,117,60,.15);color:var(--green-valid);border-radius:50px;font-size:.75rem;font-weight:600}
+@keyframes scIn{0%{transform:scale(0)}100%{transform:scale(1)}}
+
+/* === PARTNERS === */
+.partners-bottom{padding:48px 24px;background:#fff;border-top:1px solid var(--border)}
+.partners-inner{max-width:960px;margin:0 auto;text-align:center}
+.partners-label{font-size:.88rem;text-transform:uppercase;letter-spacing:3px;color:var(--text-mention);font-weight:700;margin-bottom:28px}
+.partners-logos{display:flex;align-items:center;justify-content:center;gap:32px;flex-wrap:wrap}
+.p-logo{height:36px;object-fit:contain;opacity:.7;transition:opacity .3s}
+.p-logo:hover{opacity:1}
+.p-logo.edf{height:28px}
+.p-logo.fr{height:42px}
+.p-logo.engie{height:44px;filter:brightness(0)}
+.p-logo.cee{height:40px}
+.p-sep{width:1px;height:40px;background:var(--border)}
+
+/* === FOOTER GOV === */
+.footer-gov{background:#fff;border-top:2px solid var(--bleu-france);padding:32px 24px 24px}
+.footer-inner{max-width:1140px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.footer-brand{display:flex;align-items:center;gap:14px}
+.footer-brand-logo{height:48px;width:auto}
+.footer-brand-text{font-size:.82rem;color:var(--text-mention);line-height:1.4}
+.footer-links{display:flex;gap:16px;flex-wrap:wrap}
+.footer-links a{font-size:.78rem;color:var(--text-mention);text-decoration:none;font-weight:500;transition:color .2s}
+.footer-links a:hover{color:var(--bleu-france)}
+.footer-copy{width:100%;text-align:center;margin-top:16px;padding-top:16px;border-top:1px solid var(--border);font-size:.75rem;color:var(--text-light)}
+
+.fi-anim{animation:fadeU .35s ease both}
+@keyframes fadeU{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* === RESPONSIVE === */
+@media(max-width:768px){
+  .tl-header{grid-template-columns:1fr;gap:40px}
+  .hero-stats{gap:24px;flex-wrap:wrap}
+  .hero h1{font-size:1.7rem}
+  .hero-sub{font-size:.92rem}
+  .hero-btn{padding:12px 22px;font-size:.88rem}
+  .hero-content{padding:110px 20px 40px}
+  .gov-brand-logo{height:42px}
+  .gov-brand-sep{height:30px}
+  .gov-service-name{font-size:.95rem}
+  .partners-logos{gap:20px}
+  .p-logo{height:28px}.p-logo.fr{height:32px}.p-logo.engie{height:34px}.p-logo.cee{height:30px}
+}
+@media(max-width:480px){
+  .gov-header-inner{padding:10px 16px}
+  .gov-service-tagline{display:none}
+  .gov-cta{padding:8px 14px;font-size:.8rem}
+  .gov-brand-logo{height:36px}
+  .gov-brand-sep{height:24px}
+  .gov-service-name{font-size:.88rem}
+  .hero-content{padding:90px 16px 32px}
+  .hero h1{font-size:1.5rem}
+  .hero-actions{flex-direction:column}
+  .hero-btn{width:100%;justify-content:center}
+  .hero-stats{gap:16px}
+  .hero-stat-num{font-size:1.4rem}
+  .timeline-section{padding:50px 16px}
+  .tl-left h2{font-size:1.3rem}
+  .form-section{padding:30px 12px 50px}
+  .fc-top{padding:18px 16px 14px}
+  .fc-body{padding:16px 16px 20px}
+  .fc-nav{padding:12px 16px}
+  .fc-title{font-size:1rem}
+  .opts.g2{grid-template-columns:1fr 1fr}
+  .op{padding:11px 10px;gap:8px}
+  .op-i{font-size:18px}
+  .op-t{font-size:.82rem}
+  .fd-row{grid-template-columns:1fr}
+  .bn-next{padding:11px 20px;font-size:.84rem}
+  .partners-logos{gap:16px}
+  .p-sep{height:28px}
+  .footer-inner{flex-direction:column;align-items:flex-start}
+  .footer-links{flex-direction:column;gap:8px}
+}
+</style>
+</head>
+<body>
+
+<!-- GOV HEADER -->
+<header class="gov-header" id="mainNav">
+  <div class="gov-header-inner">
+    <a href="#" class="gov-brand">
+      <img src="https://upload.wikimedia.org/wikipedia/fr/thumb/2/22/Republique-francaise-logo.svg/1280px-Republique-francaise-logo.svg.png" alt="République Française" class="gov-brand-logo">
+      <div class="gov-brand-sep"></div>
+      <div class="gov-service">
+        <div class="gov-service-name">FRANCE <span>RÉNOVE</span></div>
+        <div class="gov-service-tagline">Votre projet solaire clé en main</div>
+      </div>
+    </a>
+    <a href="#formZone" class="gov-cta">Demander un devis</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <video class="hero-video" autoplay muted loop playsinline poster="">
+    <source src="https://groupeverlaine.com/assets/videos/hero_groupeverlaine.mp4" type="video/mp4">
+  </video>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-badge">Programme disponible en 2026</div>
+    <h1>Passez au solaire et réduisez votre facture jusqu'à <span class="hl">70%</span></h1>
+    <p class="hero-sub">Un interlocuteur unique, un parcours clair, et une prise en charge complète de l'étude à la mise en service — aides comprises.</p>
+    <div class="hero-actions">
+      <a href="#formZone" class="hero-btn primary">
+        Estimer mes économies
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+      <a href="#timeline" class="hero-btn secondary">Découvrir le processus</a>
+    </div>
+    <div class="hero-stats">
+      <div><div class="hero-stat-num">2 500<span>+</span></div><div class="hero-stat-label">Installations réalisées</div></div>
+      <div><div class="hero-stat-num">4.8<span>/5</span></div><div class="hero-stat-label">Satisfaction client</div></div>
+      <div><div class="hero-stat-num">40<span>%</span></div><div class="hero-stat-label">D'aides en moyenne</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="timeline-section" id="timeline">
+  <div class="container">
+    <div class="tl-header">
+      <div class="tl-left">
+        <h2>Votre projet<br>clé en main</h2>
+        <p>On s'occupe de tout, du premier échange à la mise en service — aides comprises.</p>
+      </div>
+      <div class="tl-right" id="tlRight">
+        <div class="tl-line"></div>
+        <div class="tl-line-fill" id="tlFill"></div>
+        <div class="tl-step" data-tl="0">
+          <div class="tl-dot done" id="tlDot0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <h3>Test d'éligibilité</h3>
+          <p>Nous analysons votre éligibilité pour définir la solution la plus pertinente.</p>
+        </div>
+        <div class="tl-step" data-tl="1">
+          <div class="tl-dot done" id="tlDot1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <h3>Étude gratuite avec un expert</h3>
+          <p>Un technicien RGE confirme la faisabilité, la rentabilité, les dimensions et les points de conformité.</p>
+        </div>
+        <div class="tl-step dim" data-tl="2">
+          <div class="tl-dot pending" id="tlDot2">3</div>
+          <h3>Montage complet des aides et démarches</h3>
+          <p>Nous gérons MaPrimeRénov' et CEE, ainsi que les pièces administratives, pour un dossier conforme.</p>
+        </div>
+        <div class="tl-step dim" data-tl="3">
+          <div class="tl-dot pending" id="tlDot3">4</div>
+          <h3>Exécution et installation</h3>
+          <p>Planification, coordination, contrôle qualité : nous pilotons le chantier jusqu'à la mise en service.</p>
+        </div>
+    </div>
+    <div class="tl-cta">
+      <a href="#formZone" class="tl-cta-btn">
+        Démarrer mon projet
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FORM -->
+<section class="form-section" id="formZone">
+  <div class="form-container">
+    <div class="form-header">
+      <h2>Votre estimation <span class="hl">personnalisée</span></h2>
+      <p>Répondez en 2 minutes — un conseiller vous rappelle sous 24h.</p>
+    </div>
+    <div class="f-progress">
+      <div class="f-progress-info"><span id="pL">Étape 1/7</span><span class="pct" id="pP">0%</span></div>
+      <div class="f-track"><div class="f-fill" id="pF" style="width:0%"></div></div>
+    </div>
+    <div id="Q"></div>
+  </div>
+</section>
+
+<!-- PARTNERS -->
+<div class="partners-bottom">
+  <div class="partners-inner">
+    <div class="partners-label">En partenariat avec</div>
+    <div class="partners-logos">
+      <img src="https://upload.wikimedia.org/wikipedia/fr/d/d5/Maprimerenov_logo.jpg" alt="MaPrimeRénov'" class="p-logo fr" onerror="this.style.display='none'">      <div class="p-sep"></div>
+      <img src="https://upload.wikimedia.org/wikipedia/commons/1/12/%C3%89lectricit%C3%A9_de_France_logo.svg" alt="EDF" class="p-logo edf" onerror="this.style.display='none'">
+      <div class="p-sep"></div>
+      <img src="https://companieslogo.com/img/orig/EGIE3.SA_BIG.D-2854155a.png?t=1746548895" alt="Engie" class="p-logo engie" onerror="this.style.display='none'">
+      <div class="p-sep"></div>
+      <img src="https://www.economie.gouv.fr/files/files/directions_services/dae/img/LogoCEE550.png" alt="Certificats d'Économies d'Énergie" class="p-logo cee" onerror="this.style.display='none'">
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER GOV -->
+<footer class="footer-gov">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <img src="https://upload.wikimedia.org/wikipedia/fr/thumb/2/22/Republique-francaise-logo.svg/1280px-Republique-francaise-logo.svg.png" alt="République Française" class="footer-brand-logo">
+      <div class="footer-brand-text">France Rénove est un service<br>d'accompagnement à la rénovation énergétique.</div>
+    </div>
+    <div class="footer-links">
+      <a href="#">Mentions légales</a>
+      <a href="#">Politique de confidentialité</a>
+      <a href="#">Accessibilité</a>
+      <a href="#">Plan du site</a>
+    </div>
+    <div class="footer-copy">© 2026 France Rénove — Tous droits réservés</div>
+  </div>
+</footer>
+
+<script>
+const nav=document.getElementById('mainNav');
+window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',window.scrollY>60)});
+
+const tlSection=document.getElementById('timeline');
+const tlFill=document.getElementById('tlFill');
+const tlSteps=document.querySelectorAll('.tl-step');
+const tlDots=[document.getElementById('tlDot0'),document.getElementById('tlDot1'),document.getElementById('tlDot2'),document.getElementById('tlDot3')];
+const CHK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>';
+
+function updateTimeline(){
+  const rect=tlSection.getBoundingClientRect();
+  const h=tlSection.offsetHeight;
+  const wh=window.innerHeight;
+  const scrolled=Math.max(0,wh-rect.top);
+  const pct=Math.min(1,Math.max(0,scrolled/(h+wh*.3)));
+  tlFill.style.height=(pct*100)+'%';
+  tlSteps.forEach((s,i)=>{
+    const threshold=(i+1)/(tlSteps.length+.5);
+    if(pct>=threshold){s.classList.remove('dim');tlDots[i].className='tl-dot done';tlDots[i].innerHTML=CHK;}
+    else if(pct>=threshold-.15){s.classList.remove('dim');tlDots[i].className='tl-dot active';tlDots[i].innerHTML=(i+1);}
+    else{s.classList.add('dim');tlDots[i].className='tl-dot pending';tlDots[i].innerHTML=(i+1);}
+  });
+}
+window.addEventListener('scroll',updateTimeline,{passive:true});
+updateTimeline();
+
+const WEBHOOK_URL='https://votre-webhook-url.com/leads';
+const QS=[
+  {id:'equipped',s:1,t:'Êtes-vous déjà équipé de panneaux photovoltaïques ?',sub:'Nous adaptons notre offre.',e:'☀️',type:'c',opts:[{v:'non',l:'Non, pas encore',i:'🏠'},{v:'oui',l:'Oui, déjà équipé',i:'✅'}],g:1},
+  {id:'habitation',s:2,t:'Quel est votre type d\'habitation ?',sub:'L\'installation dépend de votre toiture.',e:'🏡',type:'c',opts:[{v:'maison',l:'Maison individuelle',i:'🏠'},{v:'appartement',l:'Appartement',i:'🏢'},{v:'immeuble',l:'Immeuble',i:'🏗️'},{v:'autre',l:'Autre',i:'📍'}],g:1,bk:{ok:['maison'],tt:'Notre offre est réservée aux maisons individuelles',tx:'L\'installation photovoltaïque nécessite un accès direct à la toiture. Nous ne pouvons pas intervenir sur ce type d\'habitation.',ic:'🏢'}},
+  {id:'propriete',s:3,t:'Êtes-vous propriétaire de votre logement ?',sub:'Condition nécessaire pour l\'installation.',e:'🔑',type:'c',opts:[{v:'proprietaire',l:'Propriétaire',i:'🔑'},{v:'locataire',l:'Locataire',i:'📄'}],g:1,bk:{ok:['proprietaire'],tt:'L\'installation est réservée aux propriétaires',tx:'En tant que locataire, l\'accord du propriétaire est nécessaire. Nous vous invitons à en discuter avec lui.',ic:'📄'}},
+  {id:'chauffage',s:4,t:'Quel est votre chauffage actuel ?',sub:'Pour estimer vos économies.',e:'🔥',type:'c',opts:[{v:'electricite',l:'Électricité',i:'⚡'},{v:'gaz',l:'Gaz',i:'🔵'},{v:'granule',l:'Granulé / Bois',i:'🪵'},{v:'fioul',l:'Fioul',i:'🛢️'}],g:1},
+  {id:'facture',s:5,t:'',sub:'Montant approximatif par mois.',e:'💶',type:'f'},
+  {id:'subvention',s:6,t:'Avez-vous un dossier de subvention en cours ?',sub:'MaPrimeRénov\', CEE ou autre.',e:'📁',type:'c',opts:[{v:'oui',l:'Oui, en cours',i:'📋'},{v:'non',l:'Non',i:'❌'},{v:'ne_sais_pas',l:'Je ne sais pas',i:'❓'}],g:0},
+  {id:'contact',s:7,t:'Vos coordonnées',sub:'Un conseiller vous rappelle sous 24h.',e:'👤',type:'ct'},
+];
+const TT=7;let S=0,BL=false;const A={};
+
+function rdr(){
+  BL=false;const q=QS[S],pct=Math.round(S/TT*100);
+  document.getElementById('pL').textContent=`Étape ${q.s}/${TT}`;
+  document.getElementById('pP').textContent=pct+'%';
+  document.getElementById('pF').style.width=pct+'%';
+  let title=q.t;
+  if(q.id==='facture'){const m={electricite:'électricité',gaz:'gaz',granule:'granulé / bois',fioul:'fioul'};title=`À combien s'élève votre facture de ${m[A.chauffage]||'énergie'} ?`;}
+  let bd='';
+  if(q.type==='c'){
+    bd=`<div class="opts ${q.g?'g2':''}">
+      ${q.opts.map(o=>`<div class="op ${A[q.id]===o.v?'sel':''}" onclick="pk('${q.id}','${o.v}')">
+        <div class="op-i">${o.i}</div><div class="op-t">${o.l}</div>
+        <div class="op-ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      </div>`).join('')}</div>`;
+  }else if(q.type==='f'){
+    bd=`<div class="fd fd-sfx"><label>Montant mensuel</label><input class="fi" type="number" inputmode="numeric" id="fI" placeholder="Ex : 120" value="${A.facture||''}" oninput="A.facture=this.value;uN()"><span>€/mois</span></div>`;
+  }else if(q.type==='ct'){
+    bd=`<div class="fd-row"><div class="fd"><label>Prénom *</label><input class="fi" id="c1" placeholder="Jean" value="${A.prenom||''}" oninput="A.prenom=this.value;uN()"></div>
+    <div class="fd"><label>Nom *</label><input class="fi" id="c2" placeholder="Dupont" value="${A.nom||''}" oninput="A.nom=this.value;uN()"></div></div>
+    <div class="fd"><label>Téléphone *</label><input class="fi" type="tel" inputmode="tel" id="c3" placeholder="06 12 34 56 78" value="${A.tel||''}" oninput="A.tel=this.value;uN()"></div>
+    <div class="fd"><label>Email</label><input class="fi" type="email" inputmode="email" id="c4" placeholder="jean@email.com" value="${A.email||''}" oninput="A.email=this.value;uN()"></div>
+    <div class="fd"><label>Code postal *</label><input class="fi" inputmode="numeric" id="c5" placeholder="75001" maxlength="5" value="${A.cp||''}" oninput="A.cp=this.value;uN()"></div>`;
+  }
+  const last=S===QS.length-1;
+  const nv=`<div class="fc-nav">
+    ${S>0?`<button class="bn-back" onclick="pv()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>Retour</button>`:'<div></div>'}
+    ${last?`<button class="bn-next bn-sub" id="nB" ${ok()?'':'disabled'} onclick="sub()">Recevoir mon estimation</button>`
+      :q.type!=='c'?`<button class="bn-next" id="nB" ${ok()?'':'disabled'} onclick="nx()">Continuer <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>`
+      :'<div></div>'}
+  </div>`;
+  document.getElementById('Q').innerHTML=`<div class="fc fi-anim">
+    <div class="fc-top"><div class="fc-badge">ÉTAPE ${q.s} / ${TT}</div>
+      <div class="fc-title-row"><div class="fc-emoji">${q.e}</div><div><div class="fc-title">${title}</div><div class="fc-sub">${q.sub}</div></div></div>
+    </div><div class="fc-body">${bd}</div>${nv}</div>`;
+  if(q.type==='f')setTimeout(()=>{const e=document.getElementById('fI');if(e)e.focus()},100);
+  if(q.type==='ct')setTimeout(()=>{const e=document.getElementById('c1');if(e)e.focus()},100);
+}
+
+function pk(id,v){A[id]=v;const q=QS[S];if(q.bk&&!q.bk.ok.includes(v)){showBk(q);return;}rdr();setTimeout(()=>nx(),280);}
+function showBk(q){
+  BL=true;const b=q.bk;
+  document.getElementById('Q').innerHTML=`<div class="fc fi-anim">
+    <div class="fc-top"><div class="fc-badge">ÉTAPE ${q.s} / ${TT}</div>
+      <div class="fc-title-row"><div class="fc-emoji">${q.e}</div><div><div class="fc-title">${q.t}</div></div></div>
+    </div><div class="fc-body"><div class="blk">
+      <div class="blk-i">${b.ic}</div><h4>${b.tt}</h4><p>${b.tx}</p>
+      <button class="blk-btn" onclick="rs(${S})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Modifier ma réponse</button>
+    </div></div></div>`;
+}
+function rs(i){delete A[QS[i].id];BL=false;rdr();}
+function ok(){const q=QS[S];if(q.type==='c')return!!A[q.id];if(q.type==='f')return A.facture&&A.facture.length>0;if(q.type==='ct')return A.prenom&&A.nom&&A.tel&&A.cp;return true;}
+function uN(){const b=document.getElementById('nB');if(b)b.disabled=!ok();}
+function nx(){if(!ok()||BL)return;if(S<QS.length-1){S++;rdr();}}
+function pv(){if(S>0){S--;BL=false;rdr();}}
+
+async function sub(){
+  if(!ok())return;
+  const p={timestamp:new Date().toISOString(),equipe_panneaux:A.equipped||'',type_habitation:A.habitation||'',statut:A.propriete||'',type_chauffage:A.chauffage||'',facture_mensuelle_eur:A.facture||'',subvention_en_cours:A.subvention||'',prenom:A.prenom||'',nom:A.nom||'',telephone:A.tel||'',email:A.email||'',code_postal:A.cp||''};
+  showSuc();
+  try{await fetch(WEBHOOK_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});}catch(e){console.log('Webhook:',e);}
+  console.log('📋 LEAD:',JSON.stringify(p,null,2));
+}
+
+function showSuc(){
+  document.getElementById('pF').style.width='100%';
+  document.getElementById('pL').textContent='Terminé !';
+  document.getElementById('pP').textContent='100%';
+  document.getElementById('Q').innerHTML=`<div class="fc fi-anim">
+    <div class="fc-top" style="background:var(--green-valid)">
+      <div class="fc-badge" style="background:rgba(255,255,255,.2);color:white">TERMINÉ ✓</div>
+      <div class="fc-title-row"><div class="fc-emoji">🎉</div><div><div class="fc-title" style="color:#fff">Demande envoyée avec succès !</div></div></div>
+    </div><div class="fc-body"><div class="suc">
+      <div class="suc-ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <h3>Merci ${A.prenom||''} !</h3>
+      <p>Notre équipe vous contacte sous <strong>24 heures</strong> avec votre estimation et l'étude de vos aides.</p>
+      <div class="suc-bd">
+        <div class="suc-b"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Devis gratuit</div>
+        <div class="suc-b"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Aides MaPrimeRénov'</div>
+        <div class="suc-b"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Clé en main</div>
+      </div>
+    </div></div></div>`;
+}
+
+rdr();
+</script>
+</body>
+</html>

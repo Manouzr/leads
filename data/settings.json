@@ -1,0 +1,10 @@
+{
+  "telegram": {
+    "botToken": "8531712401:AAG07qIXesN7R-V_mIkUc6sZ-_7nUJP_Kc8",
+    "chatId": "-1003677227158"
+  },
+  "agenda": {
+    "heureDebut": "08:00",
+    "heureFin": "20:00"
+  }
+}

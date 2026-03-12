@@ -1,0 +1,10 @@
+[
+  {
+    "id": "1",
+    "nom": "Admin",
+    "prenom": "Symbolly",
+    "email": "admin@symbolly.fr",
+    "password": "admin123",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  }
+]
