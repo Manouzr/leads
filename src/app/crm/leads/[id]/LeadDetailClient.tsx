@@ -15,8 +15,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   ArrowLeft, Save, MessageSquare, Phone,
-  MapPin, User, Home, Sun, Calendar, Send,
+  MapPin, User, Home, Sun, Calendar, Send, Trash2,
 } from "lucide-react";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { format, parseISO } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -105,6 +109,12 @@ export function LeadDetailClient({ lead: initialLead, telepros, commercials, rol
     }
   }
 
+  async function deleteLead() {
+    await fetch(`/api/leads/${lead.id}`, { method: "DELETE" });
+    toast.success("Lead supprimé");
+    router.push("/crm/leads");
+  }
+
   async function addComment() {
     if (!newComment.trim()) return;
     setAddingComment(true);
@@ -158,14 +168,37 @@ export function LeadDetailClient({ lead: initialLead, telepros, commercials, rol
             </div>
           )}
         </div>
-        {lead.rendezVous?.date && (
-          <div className="text-right hidden sm:block flex-shrink-0">
-            <div className="text-xs text-muted-foreground">RDV</div>
-            <div className="text-sm font-semibold text-amber-600">
-              {format(parseISO(lead.rendezVous.date), "dd/MM/yyyy", { locale: fr })} à {lead.rendezVous.heure}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {lead.rendezVous?.date && (
+            <div className="text-right hidden sm:block">
+              <div className="text-xs text-muted-foreground">RDV</div>
+              <div className="text-sm font-semibold text-amber-600">
+                {format(parseISO(lead.rendezVous.date), "dd/MM/yyyy", { locale: fr })} à {lead.rendezVous.heure}
+              </div>
             </div>
-          </div>
-        )}
+          )}
+          {role === "admin" && (
+            <AlertDialog>
+              <AlertDialogTrigger className="inline-flex items-center justify-center h-8 w-8 rounded-md text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors">
+                <Trash2 className="w-4 h-4" />
+              </AlertDialogTrigger>
+              <AlertDialogContent className="bg-card border-border">
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Supprimer ce lead ?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {lead.contact.prenom} {lead.contact.nom} sera définitivement supprimé.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Annuler</AlertDialogCancel>
+                  <AlertDialogAction onClick={deleteLead} className="bg-red-500 hover:bg-red-600">
+                    Supprimer
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
+        </div>
       </div>
 
       <Tabs defaultValue="infos">

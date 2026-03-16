@@ -69,9 +69,9 @@ export function AgendaClient({ rdvLeads, heureDebut, heureFin, role = "admin", t
   const endH = parseInt(heureFin.split(":")[0]) || 20;
   const hours = Array.from({ length: endH - startH + 1 }, (_, i) => startH + i);
 
-  // Week view — 7 days starting on Monday
+  // Week view — Mon to Fri only
   const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
-  const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
+  const weekDays = Array.from({ length: 5 }, (_, i) => addDays(weekStart, i));
 
   // Compute the leads to display based on mode
   const displayLeads = useMemo(() => {

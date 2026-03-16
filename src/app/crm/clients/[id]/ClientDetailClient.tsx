@@ -14,13 +14,18 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   ArrowLeft, Save, MessageSquare, Paperclip, Phone, MapPin, User,
-  Home, Sun, Calendar, Send, Upload, Download, FileText,
+  Home, Sun, Calendar, Send, Upload, Download, FileText, Trash2,
 } from "lucide-react";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import type { UserRole } from "@/types";
 import { toast } from "sonner";
 import { format, parseISO } from "date-fns";
 import { fr } from "date-fns/locale";
 
-interface Props { lead: Lead; userNames: string[]; }
+interface Props { lead: Lead; userNames: string[]; role?: UserRole; }
 
 const FIELD_OPTIONS: Record<string, string[]> = {
   situationFamiliale: ["Célibataire", "Marié(e)", "Pacsé(e)", "Divorcé(e)", "Veuf/Veuve", "Concubinage"],
@@ -60,7 +65,7 @@ function Field({ label, fieldKey, value, onChange }: { label: string; fieldKey: 
   );
 }
 
-export function ClientDetailClient({ lead: initialLead, userNames }: Props) {
+export function ClientDetailClient({ lead: initialLead, userNames, role = "admin" }: Props) {
   const router = useRouter();
   const [lead, setLead] = useState(initialLead);
   const [saving, setSaving] = useState(false);
@@ -83,6 +88,12 @@ export function ClientDetailClient({ lead: initialLead, userNames }: Props) {
     } finally {
       setSaving(false);
     }
+  }
+
+  async function deleteClient() {
+    await fetch(`/api/leads/${lead.id}`, { method: "DELETE" });
+    toast.success("Client supprimé");
+    router.push("/crm/clients");
   }
 
   async function addComment() {
@@ -159,6 +170,27 @@ export function ClientDetailClient({ lead: initialLead, userNames }: Props) {
             Signé le {format(parseISO(lead.createdAt), "dd/MM/yyyy", { locale: fr })}
           </p>
         </div>
+        {role === "admin" && (
+          <AlertDialog>
+            <AlertDialogTrigger className="inline-flex items-center justify-center h-8 w-8 rounded-md text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors flex-shrink-0">
+              <Trash2 className="w-4 h-4" />
+            </AlertDialogTrigger>
+            <AlertDialogContent className="bg-card border-border">
+              <AlertDialogHeader>
+                <AlertDialogTitle>Supprimer ce client ?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  {lead.contact.prenom} {lead.contact.nom} sera définitivement supprimé.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Annuler</AlertDialogCancel>
+                <AlertDialogAction onClick={deleteClient} className="bg-red-500 hover:bg-red-600">
+                  Supprimer
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
       </div>
 
       <Tabs defaultValue="infos">

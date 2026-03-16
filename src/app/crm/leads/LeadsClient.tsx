@@ -150,7 +150,7 @@ export function LeadsClient({ leads: initialLeads, userNames, telepros, commerci
             <div className="flex flex-wrap gap-3">
               <Select value={filterStatus} onValueChange={(v) => setFilterStatus(v ?? "tous")}>
                 <SelectTrigger className="w-full sm:w-44">
-                  <SelectValue placeholder="Statut" />
+                  <SelectValue placeholder="Tous les statuts" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="tous">Tous les statuts</SelectItem>
@@ -161,7 +161,7 @@ export function LeadsClient({ leads: initialLeads, userNames, telepros, commerci
               </Select>
               <Select value={filterSource} onValueChange={(v) => setFilterSource(v ?? "tous")}>
                 <SelectTrigger className="w-full sm:w-36">
-                  <SelectValue placeholder="Source" />
+                  <SelectValue placeholder="Toutes sources" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="tous">Toutes sources</SelectItem>
