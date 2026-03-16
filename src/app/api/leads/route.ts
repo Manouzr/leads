@@ -31,7 +31,9 @@ export async function POST(req: NextRequest) {
     createdAt: new Date().toISOString(),
     source: body.source || "landing",
     status: "À TRAITER",
-    assignedTo: "",
+    clientStatus: undefined,
+    assignedTelePro: "",
+    assignedCommercial: "",
     contact: {
       nom: body.nom || "",
       prenom: body.prenom || "",
@@ -54,7 +56,7 @@ export async function POST(req: NextRequest) {
       ageConjoint: "",
       creditsEnCours: "",
       montantCredits: "",
-      primeANAH: "",
+      primeANAH: body.subvention_en_cours ? (body.subvention_en_cours === "oui" ? "Oui" : body.subvention_en_cours === "non" ? "Non" : body.subvention_en_cours) : "",
     },
     pompeAChaleur: {
       proprietaire: body.statut_proprietaire || "",
@@ -70,23 +72,27 @@ export async function POST(req: NextRequest) {
       observation: "",
     },
     panneauxPhotovoltaiques: {
-      maisonPlusDe2Ans: "",
       proprietaireDepuis: "",
       surface: "",
-      compteurType: "",
       modeChauffage: body.type_chauffage || "",
       eauChaudeSanitaire: "",
       consommationAnnuelle: body.facture_mensuelle_eur || "",
       comblesType: "",
-      vmc: "",
       surfaceToiture: "",
       observation: "",
     },
     rendezVous: {
       date: "",
       heure: "",
-      pour: "",
-      statut: "",
+    },
+    installation: {
+      date: "",
+      heure: "",
+    },
+    contrat: {
+      dateContrat: "",
+      prixAnnonce: "",
+      tauxInteret: "",
     },
     commentaires: commentTexte
       ? [{ date: new Date().toISOString(), auteur: "Système", texte: commentTexte }]

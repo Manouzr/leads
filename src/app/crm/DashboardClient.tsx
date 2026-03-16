@@ -4,40 +4,28 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge } from "@/components/crm/StatusBadge";
 import type { Lead } from "@/types";
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from "recharts";
-import {
-  Users,
-  TrendingUp,
-  CheckCircle,
-  XCircle,
-  Calendar,
-  Percent,
-  ArrowRight,
-} from "lucide-react";
+import { Users, CheckCircle, Percent, ArrowRight, CalendarDays, XCircle, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import { format, parseISO } from "date-fns";
 import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import type { UserRole } from "@/types";
 
 interface Props {
   stats: {
     total: number;
     signed: number;
-    enCours: number;
-    annules: number;
     conversionRate: number;
-    rdvAujourdhui: number;
+    rdvTotal: number;
+    rdvNegatif: number;
+    rdvSuccessRate: number;
   };
   chartData: Array<{ status: string; count: number }>;
   recentLeads: Lead[];
   rdvAujourdhui: Lead[];
+  role?: UserRole;
 }
 
 function StatCard({
@@ -47,7 +35,6 @@ function StatCard({
 }) {
   return (
     <Card className="relative overflow-hidden border-border bg-card">
-      {/* Shimmer overlay */}
       <div className="absolute inset-0 shimmer pointer-events-none" />
       <CardContent className="p-5">
         <div className="flex items-start justify-between">
@@ -65,22 +52,33 @@ function StatCard({
   );
 }
 
-export function DashboardClient({ stats, chartData, recentLeads, rdvAujourdhui }: Props) {
+const DASHBOARD_TITLES: Record<UserRole, { title: string; subtitle: string }> = {
+  admin: { title: "Dashboard", subtitle: "Vue d'ensemble de votre activité" },
+  telepro: { title: "Mes leads", subtitle: "Vos leads assignés" },
+  commercial: { title: "Mes RDV", subtitle: "Vos rendez-vous assignés" },
+};
+
+export function DashboardClient({ stats, chartData, recentLeads, rdvAujourdhui, role = "admin" }: Props) {
+  const { title, subtitle } = DASHBOARD_TITLES[role] ?? DASHBOARD_TITLES.admin;
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
-        <p className="text-muted-foreground text-sm mt-1">Vue d&apos;ensemble de votre activité</p>
+        <h1 className="text-2xl font-bold text-foreground">{title}</h1>
+        <p className="text-muted-foreground text-sm mt-1">{subtitle}</p>
       </div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-2 xl:grid-cols-3 gap-4">
+      {/* KPI Cards — row 1: leads */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <StatCard title="Total Leads" value={stats.total} icon={Users} color="bg-primary/15 text-primary" />
-        <StatCard title="Signés" value={stats.signed} subtitle="tous statuts SIGNÉ*" icon={CheckCircle} color="bg-emerald-500/15 text-emerald-400" />
-        <StatCard title="En cours" value={stats.enCours} icon={TrendingUp} color="bg-blue-500/15 text-blue-400" />
-        <StatCard title="Annulés / KO" value={stats.annules} icon={XCircle} color="bg-red-500/15 text-red-400" />
-        <StatCard title="RDV aujourd&apos;hui" value={stats.rdvAujourdhui} icon={Calendar} color="bg-orange-500/15 text-orange-400" />
+        <StatCard title="Signés" value={stats.signed} subtitle="statut SIGNÉ" icon={CheckCircle} color="bg-emerald-500/15 text-emerald-400" />
         <StatCard title="Taux de conversion" value={`${stats.conversionRate}%`} subtitle="signés / total" icon={Percent} color="bg-violet-500/15 text-violet-400" />
+      </div>
+
+      {/* KPI Cards — row 2: RDV */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <StatCard title="Total RDV" value={stats.rdvTotal} subtitle="leads avec RDV planifié" icon={CalendarDays} color="bg-blue-500/15 text-blue-400" />
+        <StatCard title="RDV Négatifs" value={stats.rdvNegatif} subtitle="annulé / NRP / négatif…" icon={XCircle} color="bg-red-500/15 text-red-400" />
+        <StatCard title="Taux de réussite RDV" value={`${stats.rdvSuccessRate}%`} subtitle="signés / total RDV" icon={TrendingUp} color="bg-amber-500/15 text-amber-400" />
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
@@ -117,9 +115,9 @@ export function DashboardClient({ stats, chartData, recentLeads, rdvAujourdhui }
                       fontSize: 12,
                     }}
                     labelStyle={{ color: "oklch(0.97 0 0)" }}
-                    itemStyle={{ color: "oklch(0.62 0.22 264)" }}
+                    itemStyle={{ color: "oklch(0.7 0.16 80)" }}
                   />
-                  <Bar dataKey="count" fill="oklch(0.62 0.22 264)" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="count" fill="oklch(0.7 0.16 80)" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             )}
@@ -154,7 +152,6 @@ export function DashboardClient({ stats, chartData, recentLeads, rdvAujourdhui }
                       </div>
                       <div className="text-right">
                         <p className="text-sm font-semibold text-primary">{lead.rendezVous.heure}</p>
-                        <p className="text-xs text-muted-foreground">{lead.rendezVous.statut}</p>
                       </div>
                     </div>
                   </Link>

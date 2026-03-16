@@ -3,7 +3,7 @@
     "id": "7460521e-2e90-4532-8c67-be44b14d6443",
     "createdAt": "2026-03-12T09:34:09.835Z",
     "source": "landing",
-    "status": "EN COURS",
+    "status": "SIGNÉ",
     "assignedTo": "Symbolly Admin",
     "contact": {
       "nom": "Belmont",
@@ -68,13 +68,19 @@
         "texte": "📋 Formulaire landing — réponses :\n• Déjà équipé panneaux : oui\n• Type habitation : maison\n• Statut : proprietaire\n• Chauffage : electricite\n• Facture mensuelle : 230 €\n• Subvention en cours : non"
       }
     ],
-    "piecesJointes": []
+    "piecesJointes": [],
+    "assignedTelePro": "shain.tele",
+    "installation": {
+      "date": "2026-03-17",
+      "heure": "10:00"
+    },
+    "clientStatus": "INSTALL EN COURS"
   },
   {
     "id": "8f3d5843-978a-4d93-bd1a-80b8155add11",
     "createdAt": "2026-03-12T08:53:59.534Z",
     "source": "landing",
-    "status": "À TRAITER",
+    "status": "SIGNÉ",
     "assignedTo": "",
     "contact": {
       "nom": "Dupont",
@@ -83,9 +89,9 @@
       "autreTelephone": "",
       "mobile": "",
       "email": "jeanddupont@gmail.com",
-      "adresse": "",
+      "adresse": "12 rue des pieds",
       "codePostal": "75012",
-      "ville": ""
+      "ville": "Paris"
     },
     "qualification": {
       "situationFamiliale": "Célibataire",
@@ -127,8 +133,8 @@
       "observation": ""
     },
     "rendezVous": {
-      "date": "2026-03-13",
-      "heure": "10:00",
+      "date": "2026-03-16",
+      "heure": "15:00",
       "pour": "",
       "statut": "confirmé"
     },
@@ -139,6 +145,8 @@
         "texte": "📋 Formulaire landing — réponses :\n• Déjà équipé panneaux : non\n• Type habitation : maison\n• Statut : proprietaire\n• Chauffage : electricite\n• Facture mensuelle : 250 €\n• Subvention en cours : non"
       }
     ],
-    "piecesJointes": []
+    "piecesJointes": [],
+    "assignedTelePro": "shain.tele",
+    "assignedCommercial": "toc.toc"
   }
 ]

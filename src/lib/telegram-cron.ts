@@ -34,7 +34,6 @@ async function checkRdvNotifications() {
 
   for (const lead of leads) {
     if (!lead.rendezVous?.date || !lead.rendezVous.heure) continue;
-    if (lead.rendezVous.statut === "annulé") continue;
 
     try {
       const rdvDate = parseISO(lead.rendezVous.date);
@@ -70,7 +69,7 @@ async function sendTomorrowRecap(leads: Lead[], now: Date) {
   const tomorrowStr = format(tomorrow, "yyyy-MM-dd");
 
   const tomorrowLeads = leads.filter((l) => {
-    return l.rendezVous?.date === tomorrowStr && l.rendezVous.statut !== "annulé";
+    return l.rendezVous?.date === tomorrowStr;
   });
 
   if (tomorrowLeads.length === 0) return;

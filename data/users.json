@@ -3,8 +3,30 @@
     "id": "1",
     "nom": "Admin",
     "prenom": "Symbolly",
+    "username": "admin",
     "email": "admin@symbolly.fr",
     "password": "admin123",
+    "role": "admin",
     "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "f2865619-9013-48ec-9712-ff1fcb2c9bbe",
+    "nom": "shain",
+    "prenom": "shain",
+    "username": "shain.tele",
+    "email": "shain.tele@gmail.com",
+    "password": "1234567",
+    "role": "telepro",
+    "createdAt": "2026-03-16T12:50:32.819Z"
+  },
+  {
+    "id": "37d84441-c1c3-45fc-8424-347d940ad66c",
+    "nom": "Toc",
+    "prenom": "Toc",
+    "username": "toc.toc",
+    "email": "toctoc@gmail.com",
+    "password": "1234567",
+    "role": "commercial",
+    "createdAt": "2026-03-16T12:51:15.004Z"
   }
 ]

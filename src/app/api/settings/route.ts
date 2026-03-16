@@ -4,7 +4,7 @@ import type { Settings } from "@/types";
 
 const DEFAULT_SETTINGS: Settings = {
   telegram: { botToken: "", chatId: "" },
-  agenda: { heureDebut: "08:00", heureFin: "20:00" },
+  agenda: { heureDebut: "08:00", heureFin: "20:00", joursOuvrables: [1,2,3,4,5], installHeureDebut: "08:00", installHeureFin: "18:00" },
 };
 
 export async function GET() {

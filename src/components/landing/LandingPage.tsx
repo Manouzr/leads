@@ -7,7 +7,7 @@ const QUESTIONS = [
   {
     id: "equipped",
     s: 1,
-    t: "Êtes-vous déjà équipé de panneaux photovoltaïques ?",
+    t: "Êtes-vous déjà équipé de panneaux photovoltaïques / pompe à chaleur ?",
     sub: "Nous adaptons notre offre.",
     e: "☀️",
     type: "c",

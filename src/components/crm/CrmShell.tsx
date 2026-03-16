@@ -4,8 +4,15 @@ import { useState } from "react";
 import { Sidebar } from "./Sidebar";
 import { Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { UserRole } from "@/types";
 
-export function CrmShell({ children }: { children: React.ReactNode }) {
+interface Props {
+  children: React.ReactNode;
+  role: UserRole;
+  username: string;
+}
+
+export function CrmShell({ children, role, username }: Props) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -25,7 +32,7 @@ export function CrmShell({ children }: { children: React.ReactNode }) {
           open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
-        <Sidebar onClose={() => setOpen(false)} />
+        <Sidebar onClose={() => setOpen(false)} role={role} username={username} />
       </div>
 
       {/* Mobile top bar */}

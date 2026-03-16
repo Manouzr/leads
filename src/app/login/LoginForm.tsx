@@ -6,11 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Zap, Lock, Mail } from "lucide-react";
+import { Zap, Lock, User } from "lucide-react";
 import { toast } from "sonner";
 
 export default function LoginForm() {
-  const [email, setEmail] = useState("");
+  const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -24,7 +24,7 @@ export default function LoginForm() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email: login, password }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -61,16 +61,17 @@ export default function LoginForm() {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="login">Nom d&apos;utilisateur ou email</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
-                    id="email"
-                    type="email"
-                    placeholder="admin@symbolly.fr"
+                    id="login"
+                    type="text"
+                    placeholder="admin"
                     className="pl-9"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={login}
+                    onChange={(e) => setLogin(e.target.value)}
+                    autoComplete="username"
                     required
                   />
                 </div>
@@ -86,6 +87,7 @@ export default function LoginForm() {
                     className="pl-9"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    autoComplete="current-password"
                     required
                   />
                 </div>
@@ -95,7 +97,7 @@ export default function LoginForm() {
               </Button>
             </form>
             <p className="text-xs text-muted-foreground text-center mt-4">
-              Compte par défaut : admin@symbolly.fr / admin123
+              Compte par défaut : admin / admin123
             </p>
           </CardContent>
         </Card>

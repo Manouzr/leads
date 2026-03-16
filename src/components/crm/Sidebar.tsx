@@ -3,24 +3,36 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, Users, Calendar, Settings, LogOut, X } from "lucide-react";
+import { LayoutDashboard, Users, Calendar, Settings, LogOut, X, UserCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import type { UserRole } from "@/types";
 
-const navItems = [
-  { href: "/crm", icon: LayoutDashboard, label: "Dashboard" },
-  { href: "/crm/leads", icon: Users, label: "Leads" },
-  { href: "/crm/agenda", icon: Calendar, label: "Agenda" },
-  { href: "/crm/parametres", icon: Settings, label: "Paramètres" },
-];
+const ALL_NAV_ITEMS = [
+  { href: "/crm", icon: LayoutDashboard, label: "Dashboard", roles: ["admin", "telepro", "commercial"] },
+  { href: "/crm/leads", icon: Users, label: "Leads", roles: ["admin", "telepro"] },
+  { href: "/crm/agenda", icon: Calendar, label: "Agenda", roles: ["admin", "telepro", "commercial"] },
+  { href: "/crm/clients", icon: UserCheck, label: "Clients", roles: ["admin"] },
+  { href: "/crm/parametres", icon: Settings, label: "Paramètres", roles: ["admin"] },
+] as const;
+
+const ROLE_LABELS: Record<UserRole, string> = {
+  admin: "Administrateur",
+  telepro: "Téléprospecteur",
+  commercial: "Commercial",
+};
 
 interface Props {
   onClose?: () => void;
+  role: UserRole;
+  username: string;
 }
 
-export function Sidebar({ onClose }: Props) {
+export function Sidebar({ onClose, role, username }: Props) {
   const pathname = usePathname();
   const router = useRouter();
+
+  const navItems = ALL_NAV_ITEMS.filter((item) => (item.roles as readonly string[]).includes(role));
 
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -74,8 +86,12 @@ export function Sidebar({ onClose }: Props) {
         })}
       </nav>
 
-      {/* Logout */}
-      <div className="px-3 py-4 border-t border-amber-100">
+      {/* User info + Logout */}
+      <div className="px-3 py-4 border-t border-amber-100 space-y-2">
+        <div className="px-3 py-2 rounded-lg bg-amber-50 border border-amber-100">
+          <p className="text-xs font-semibold text-gray-800 truncate">{username}</p>
+          <p className="text-xs text-amber-600 font-medium">{ROLE_LABELS[role] ?? role}</p>
+        </div>
         <Button
           variant="ghost"
           size="sm"

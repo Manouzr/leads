@@ -2,27 +2,44 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { Settings } from "@/types";
+import type { Settings, UserRole } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { Users, MessageSquare, Clock, Trash2, Plus, Save, TestTube, Eye, EyeOff } from "lucide-react";
+import { Users, MessageSquare, Clock, Trash2, Plus, Save, TestTube, Eye, EyeOff, BarChart2 } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { StatusBadge } from "@/components/crm/StatusBadge";
+import Link from "next/link";
+import { format, parseISO } from "date-fns";
+import { fr } from "date-fns/locale";
 
 type SafeUser = Omit<import("@/types").User, "password">;
+
+type UserStatEntry = {
+  totalLeads: number;
+  rdvCount: number;
+  signedCount: number;
+  negativeCount: number;
+  recentLeads: Array<{ id: string; contact: { prenom: string; nom: string }; status: string; createdAt: string }>;
+};
 
 interface Props {
   settings: Settings;
   users: SafeUser[];
+  userStats?: Record<string, UserStatEntry>;
 }
 
-export function ParametresClient({ settings: initialSettings, users: initialUsers }: Props) {
+const DAYS_LABELS = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
+
+export function ParametresClient({ settings: initialSettings, users: initialUsers, userStats = {} }: Props) {
   const router = useRouter();
   const [settings, setSettings] = useState(initialSettings);
   const [users, setUsers] = useState(initialUsers);
@@ -30,13 +47,16 @@ export function ParametresClient({ settings: initialSettings, users: initialUser
   const [testingTelegram, setTestingTelegram] = useState(false);
   const [showToken, setShowToken] = useState(false);
 
-  const [newUser, setNewUser] = useState({ prenom: "", nom: "", email: "", password: "" });
+  const [newUser, setNewUser] = useState({ prenom: "", nom: "", username: "", email: "", password: "", role: "telepro" as UserRole });
   const [addingUser, setAddingUser] = useState(false);
   const [showAddUser, setShowAddUser] = useState(false);
 
   // Password change
   const [editUserId, setEditUserId] = useState<string | null>(null);
   const [newPassword, setNewPassword] = useState("");
+
+  // User profile dialog
+  const [viewingUser, setViewingUser] = useState<SafeUser | null>(null);
 
   async function saveSettings() {
     setSavingSettings(true);
@@ -96,7 +116,7 @@ export function ParametresClient({ settings: initialSettings, users: initialUser
       if (!res.ok) { const d = await res.json(); toast.error(d.error); return; }
       const created = await res.json();
       setUsers([...users, created]);
-      setNewUser({ prenom: "", nom: "", email: "", password: "" });
+      setNewUser({ prenom: "", nom: "", username: "", email: "", password: "", role: "telepro" });
       setShowAddUser(false);
       toast.success("Utilisateur créé");
     } finally {
@@ -122,6 +142,14 @@ export function ParametresClient({ settings: initialSettings, users: initialUser
     setNewPassword("");
     toast.success("Mot de passe modifié");
   }
+
+  function toggleWorkingDay(day: number) {
+    const current = settings.agenda.joursOuvrables || [1, 2, 3, 4, 5];
+    const next = current.includes(day) ? current.filter((d) => d !== day) : [...current, day].sort();
+    setSettings({ ...settings, agenda: { ...settings.agenda, joursOuvrables: next } });
+  }
+
+  const workingDays = settings.agenda.joursOuvrables || [1, 2, 3, 4, 5];
 
   return (
     <div className="space-y-6 max-w-2xl">
@@ -159,8 +187,23 @@ export function ParametresClient({ settings: initialSettings, users: initialUser
                 </div>
               </div>
               <div className="space-y-1.5">
+                <Label>Nom d&apos;utilisateur</Label>
+                <Input placeholder="jean.dupont" value={newUser.username} onChange={(e) => setNewUser({ ...newUser, username: e.target.value })} />
+              </div>
+              <div className="space-y-1.5">
                 <Label>Email *</Label>
                 <Input type="email" placeholder="jean@symbolly.fr" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Rôle</Label>
+                <Select value={newUser.role} onValueChange={(v) => setNewUser({ ...newUser, role: (v ?? "telepro") as UserRole })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="admin">Admin</SelectItem>
+                    <SelectItem value="telepro">Téléprospecteur</SelectItem>
+                    <SelectItem value="commercial">Commercial</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-1.5">
                 <Label>Mot de passe *</Label>
@@ -181,9 +224,17 @@ export function ParametresClient({ settings: initialSettings, users: initialUser
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-medium text-foreground">{user.prenom} {user.nom}</p>
-                  <p className="text-xs text-muted-foreground">{user.email}</p>
+                  <p className="text-xs text-muted-foreground">{user.username || user.email} · <span className="capitalize">{user.role || "admin"}</span></p>
                 </div>
                 <div className="flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-xs gap-1"
+                    onClick={() => setViewingUser(user)}
+                  >
+                    <BarChart2 className="w-3.5 h-3.5" /> Fiche
+                  </Button>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -300,7 +351,7 @@ export function ParametresClient({ settings: initialSettings, users: initialUser
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label>Heure de début</Label>
+              <Label>Heure de début (RDV)</Label>
               <Input
                 type="time"
                 value={settings.agenda.heureDebut}
@@ -308,12 +359,32 @@ export function ParametresClient({ settings: initialSettings, users: initialUser
               />
             </div>
             <div className="space-y-1.5">
-              <Label>Heure de fin</Label>
+              <Label>Heure de fin (RDV)</Label>
               <Input
                 type="time"
                 value={settings.agenda.heureFin}
                 onChange={(e) => setSettings({ ...settings, agenda: { ...settings.agenda, heureFin: e.target.value } })}
               />
+            </div>
+          </div>
+          <Separator />
+          <div className="space-y-2">
+            <Label>Jours ouvrables</Label>
+            <div className="flex gap-2 flex-wrap">
+              {DAYS_LABELS.map((label, day) => (
+                <button
+                  key={day}
+                  type="button"
+                  onClick={() => toggleWorkingDay(day)}
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium border transition-colors ${
+                    workingDays.includes(day)
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-card text-muted-foreground border-border hover:border-primary/50"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
             </div>
           </div>
         </CardContent>
@@ -326,6 +397,76 @@ export function ParametresClient({ settings: initialSettings, users: initialUser
           {savingSettings ? "Sauvegarde..." : "Sauvegarder tous les paramètres"}
         </Button>
       </div>
+
+      {/* User profile dialog */}
+      <Dialog open={!!viewingUser} onOpenChange={(open) => { if (!open) setViewingUser(null); }}>
+        <DialogContent className="bg-card border-border max-w-md">
+          {viewingUser && (() => {
+            const uname = viewingUser.username || `${viewingUser.prenom} ${viewingUser.nom}`;
+            const stats = userStats[uname];
+            return (
+              <>
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 font-bold text-sm">
+                      {uname.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <p className="text-base font-semibold text-foreground">{viewingUser.prenom} {viewingUser.nom}</p>
+                      <p className="text-xs text-muted-foreground font-normal capitalize">{viewingUser.role || "admin"} · {viewingUser.email}</p>
+                    </div>
+                  </DialogTitle>
+                </DialogHeader>
+                {stats ? (
+                  <div className="space-y-4 mt-2">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      <div className="p-3 rounded-lg bg-accent/40 text-center">
+                        <p className="text-2xl font-bold text-foreground">{stats.totalLeads}</p>
+                        <p className="text-xs text-muted-foreground">Leads</p>
+                      </div>
+                      <div className="p-3 rounded-lg bg-accent/40 text-center">
+                        <p className="text-2xl font-bold text-foreground">{stats.rdvCount}</p>
+                        <p className="text-xs text-muted-foreground">RDV</p>
+                      </div>
+                      <div className="p-3 rounded-lg bg-emerald-500/10 text-center">
+                        <p className="text-2xl font-bold text-emerald-600">{stats.signedCount}</p>
+                        <p className="text-xs text-muted-foreground">Signés</p>
+                      </div>
+                      <div className="p-3 rounded-lg bg-slate-800 text-center">
+                        <p className="text-2xl font-bold text-white">{stats.negativeCount}</p>
+                        <p className="text-xs text-slate-300">Négatifs</p>
+                      </div>
+                    </div>
+                    {stats.recentLeads.length > 0 && (
+                      <div className="space-y-2">
+                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Derniers leads</p>
+                        {stats.recentLeads.map((lead) => (
+                          <Link key={lead.id} href={`/crm/leads/${lead.id}`} onClick={() => setViewingUser(null)}>
+                            <div className="flex items-center justify-between p-2.5 rounded-lg bg-accent/30 hover:bg-accent/60 transition-colors cursor-pointer">
+                              <div>
+                                <p className="text-sm font-medium text-foreground">{lead.contact.prenom} {lead.contact.nom}</p>
+                                <p className="text-xs text-muted-foreground">{format(parseISO(lead.createdAt), "dd/MM/yyyy", { locale: fr })}</p>
+                              </div>
+                              <StatusBadge status={lead.status as import("@/types").LeadStatus} />
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                    <Link href="/crm/leads" onClick={() => setViewingUser(null)}>
+                      <Button variant="outline" size="sm" className="w-full mt-1">
+                        Voir tous ses leads
+                      </Button>
+                    </Link>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground mt-2">Aucune statistique disponible.</p>
+                )}
+              </>
+            );
+          })()}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

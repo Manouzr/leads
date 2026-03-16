@@ -4,7 +4,7 @@ import type { Settings, Lead } from "@/types";
 export async function sendTelegramMessage(message: string): Promise<boolean> {
   const settings = readJson<Settings>("settings.json", {
     telegram: { botToken: "", chatId: "" },
-    agenda: { heureDebut: "08:00", heureFin: "20:00" },
+    agenda: { heureDebut: "08:00", heureFin: "20:00", joursOuvrables: [1,2,3,4,5], installHeureDebut: "08:00", installHeureFin: "18:00" },
   });
 
   const { botToken, chatId } = settings.telegram;

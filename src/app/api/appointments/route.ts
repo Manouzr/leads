@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readJson } from "@/lib/storage";
 import type { Lead } from "@/types";
-import { format, isToday, isTomorrow, parseISO } from "date-fns";
+import { isToday, isTomorrow, parseISO } from "date-fns";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -11,7 +11,6 @@ export async function GET(req: NextRequest) {
 
   const rdvLeads = leads.filter((lead) => {
     if (!lead.rendezVous?.date) return false;
-    if (lead.rendezVous.statut === "annulé") return false;
     if (dateParam) {
       return lead.rendezVous.date === dateParam;
     }
@@ -31,8 +30,6 @@ export async function GET(req: NextRequest) {
     ville: lead.contact.ville,
     date: lead.rendezVous.date,
     heure: lead.rendezVous.heure,
-    pour: lead.rendezVous.pour,
-    statut: lead.rendezVous.statut,
     leadStatus: lead.status,
   }));
 

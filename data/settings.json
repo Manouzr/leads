@@ -5,6 +5,13 @@
   },
   "agenda": {
     "heureDebut": "08:00",
-    "heureFin": "20:00"
+    "heureFin": "20:00",
+    "joursOuvrables": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ]
   }
 }

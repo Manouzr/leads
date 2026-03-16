@@ -22,8 +22,10 @@ export async function POST(req: NextRequest) {
     id: uuidv4(),
     nom: body.nom || "",
     prenom: body.prenom || "",
+    username: body.username || body.email,
     email: body.email,
     password: body.password,
+    role: body.role || "telepro",
     createdAt: new Date().toISOString(),
   };
 
