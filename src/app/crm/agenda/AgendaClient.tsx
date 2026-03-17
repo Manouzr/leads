@@ -69,9 +69,12 @@ export function AgendaClient({ rdvLeads, heureDebut, heureFin, role = "admin", t
   const endH = parseInt(heureFin.split(":")[0]) || 20;
   const hours = Array.from({ length: endH - startH + 1 }, (_, i) => startH + i);
 
-  // Week view — Mon to Fri only
+  // Week view: leads = Mon–Fri only; installs = Mon–Sat
   const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
-  const weekDays = Array.from({ length: 5 }, (_, i) => addDays(weekStart, i));
+  const weekDays = Array.from(
+    { length: effectiveMode === "rdv" ? 5 : 6 },
+    (_, i) => addDays(weekStart, i)
+  );
 
   // Compute the leads to display based on mode
   const displayLeads = useMemo(() => {
@@ -132,7 +135,8 @@ export function AgendaClient({ rdvLeads, heureDebut, heureFin, role = "admin", t
   function prevPeriod() { setCurrentDate(subWeeks(currentDate, 1)); }
   function nextPeriod() { setCurrentDate(addWeeks(currentDate, 1)); }
 
-  const periodLabel = `${format(weekStart, "d", { locale: fr })} – ${format(addDays(weekStart, 6), "d MMMM yyyy", { locale: fr })}`;
+  const weekEnd = addDays(weekStart, effectiveMode === "rdv" ? 4 : 6);
+  const periodLabel = `${format(weekStart, "d", { locale: fr })} – ${format(weekEnd, "d MMMM yyyy", { locale: fr })}`;
   const isCurrentPeriodToday = weekDays.some((d) => isToday(d));
 
   return (

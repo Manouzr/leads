@@ -487,7 +487,7 @@ export default function LandingPage() {
                     <svg viewBox="0 0 24 24" fill="none" stroke="#18753c" strokeWidth="2.5" strokeLinecap="round" style={{ width: 28, height: 28 }}><polyline points="20 6 9 17 4 12" /></svg>
                   </div>
                   <h3>Merci {answers.prenom || ""} !</h3>
-                  <p>Notre équipe vous contacte sous <strong>24 heures</strong> avec votre estimation et l&apos;étude de vos aides.</p>
+                  <p>Votre demande a bien été prise en compte un conseiller téléphonique, vous recontactera dans les prochaine <strong>24 a 48 heures</strong> pour valider votre éligibilité.</p>
                   <div className="suc-bd">
                     {["Devis gratuit", "Aides MaPrimeRénov'", "Clé en main"].map((l) => (
                       <div key={l} className="suc-b">

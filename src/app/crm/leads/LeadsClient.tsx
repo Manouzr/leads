@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import type { Lead, LeadStatus, UserRole } from "@/types";
 import { ALL_STATUSES } from "@/types";
@@ -10,12 +10,15 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, Plus, Filter, Phone, MapPin, Calendar, CheckSquare, Square } from "lucide-react";
+import { Search, Plus, Filter, Phone, MapPin, Calendar, CheckSquare, Square, Upload, Trash2 } from "lucide-react";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { format, parseISO } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { ImportLeadsDialog } from "@/components/crm/ImportLeadsDialog";
+import { PaginationBar } from "@/components/crm/PaginationBar";
 
 interface Props {
   leads: Lead[];
@@ -34,12 +37,15 @@ export function LeadsClient({ leads: initialLeads, userNames, telepros, commerci
   const [filterDate, setFilterDate] = useState("");
   const [filterTelePro, setFilterTelePro] = useState<string>("tous");
   const [filterCommercial, setFilterCommercial] = useState<string>("tous");
+  const [showImport, setShowImport] = useState(false);
   const [showNewLead, setShowNewLead] = useState(false);
   const [creating, setCreating] = useState(false);
   const [newLead, setNewLead] = useState({ prenom: "", nom: "", telephone: "", ville: "", codePostal: "" });
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkStatusValue, setBulkStatusValue] = useState<string>("");
   const [bulkTelepro, setBulkTelepro] = useState<string>("");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
 
   const filtered = useMemo(() => {
     let result = leads;
@@ -61,6 +67,14 @@ export function LeadsClient({ leads: initialLeads, userNames, telepros, commerci
     if (filterCommercial !== "tous") result = result.filter((l) => l.assignedCommercial === filterCommercial);
     return result;
   }, [leads, search, filterStatus, filterSource, filterDate, filterTelePro, filterCommercial]);
+
+  // Reset to page 1 whenever filters change
+  useEffect(() => { setPage(1); }, [search, filterStatus, filterSource, filterDate, filterTelePro, filterCommercial]);
+
+  const paginated = useMemo(
+    () => filtered.slice((page - 1) * pageSize, page * pageSize),
+    [filtered, page, pageSize]
+  );
 
   async function createLead() {
     if (!newLead.nom || !newLead.telephone) {
@@ -103,6 +117,18 @@ export function LeadsClient({ leads: initialLeads, userNames, telepros, commerci
     toast.success(`${count} lead${count > 1 ? "s" : ""} mis à jour`);
   }
 
+  async function bulkDelete() {
+    const count = selectedIds.size;
+    await Promise.all(
+      [...selectedIds].map((id) =>
+        fetch(`/api/leads/${id}`, { method: "DELETE" })
+      )
+    );
+    setLeads(leads.filter((l) => !selectedIds.has(l.id)));
+    setSelectedIds(new Set());
+    toast.success(`${count} lead${count > 1 ? "s" : ""} supprimé${count > 1 ? "s" : ""}`);
+  }
+
   function toggleSelect(id: string) {
     setSelectedIds((prev) => {
       const next = new Set(prev);
@@ -127,11 +153,20 @@ export function LeadsClient({ leads: initialLeads, userNames, telepros, commerci
       <div className="flex items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Leads</h1>
-          <p className="text-muted-foreground text-sm mt-1">{filtered.length} lead{filtered.length > 1 ? "s" : ""} affiché{filtered.length > 1 ? "s" : ""}</p>
+          <p className="text-muted-foreground text-sm mt-1">{filtered.length} lead{filtered.length > 1 ? "s" : ""} au total</p>
         </div>
-        <Button onClick={() => setShowNewLead(true)} className="gap-2 flex-shrink-0">
-          <Plus className="w-4 h-4" /> <span className="hidden sm:inline">Nouveau lead</span><span className="sm:hidden">Nouveau</span>
-        </Button>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {role === "admin" && (
+            <Button variant="outline" onClick={() => setShowImport(true)} className="gap-2">
+              <Upload className="w-4 h-4" />
+              <span className="hidden sm:inline">Importer XLSX</span>
+              <span className="sm:hidden">Import</span>
+            </Button>
+          )}
+          <Button onClick={() => setShowNewLead(true)} className="gap-2">
+            <Plus className="w-4 h-4" /> <span className="hidden sm:inline">Nouveau lead</span><span className="sm:hidden">Nouveau</span>
+          </Button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -167,6 +202,7 @@ export function LeadsClient({ leads: initialLeads, userNames, telepros, commerci
                   <SelectItem value="tous">Toutes sources</SelectItem>
                   <SelectItem value="landing">Landing</SelectItem>
                   <SelectItem value="manuel">Manuel</SelectItem>
+                  <SelectItem value="import">Import XLSX</SelectItem>
                 </SelectContent>
               </Select>
               <Input
@@ -249,6 +285,26 @@ export function LeadsClient({ leads: initialLeads, userNames, telepros, commerci
               <Button variant="ghost" size="sm" className="text-xs" onClick={() => setSelectedIds(new Set())}>
                 Désélectionner tout
               </Button>
+              <AlertDialog>
+                <AlertDialogTrigger className="inline-flex items-center gap-1.5 h-8 px-3 rounded-md text-xs font-medium text-red-500 hover:text-red-400 hover:bg-red-500/10 transition-colors ml-auto">
+                  <Trash2 className="w-3.5 h-3.5" />
+                  Supprimer ({selectedIds.size})
+                </AlertDialogTrigger>
+                <AlertDialogContent className="bg-card border-border">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Supprimer {selectedIds.size} lead{selectedIds.size > 1 ? "s" : ""} ?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Cette action est irréversible. Les {selectedIds.size} lead{selectedIds.size > 1 ? "s" : ""} sélectionné{selectedIds.size > 1 ? "s" : ""} seront définitivement supprimé{selectedIds.size > 1 ? "s" : ""}.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Annuler</AlertDialogCancel>
+                    <AlertDialogAction onClick={bulkDelete} className="bg-red-500 hover:bg-red-600 text-white">
+                      Supprimer définitivement
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           </CardContent>
         </Card>
@@ -290,7 +346,7 @@ export function LeadsClient({ leads: initialLeads, userNames, telepros, commerci
                   </td>
                 </tr>
               ) : (
-                filtered.map((lead) => (
+                paginated.map((lead) => (
                   <tr
                     key={lead.id}
                     className={`border-b border-border/50 hover:bg-accent/30 transition-colors ${selectedIds.has(lead.id) ? "bg-primary/5" : ""}`}
@@ -359,7 +415,26 @@ export function LeadsClient({ leads: initialLeads, userNames, telepros, commerci
             </tbody>
           </table>
         </div>
+        {filtered.length > 0 && (
+          <PaginationBar
+            total={filtered.length}
+            page={page}
+            pageSize={pageSize}
+            onPageChange={setPage}
+            onPageSizeChange={setPageSize}
+          />
+        )}
       </Card>
+
+      {/* Import XLSX Dialog */}
+      <ImportLeadsDialog
+        open={showImport}
+        onOpenChange={setShowImport}
+        onImported={(count) => {
+          // Refresh page to show imported leads
+          window.location.reload();
+        }}
+      />
 
       {/* New Lead Dialog */}
       <Dialog open={showNewLead} onOpenChange={setShowNewLead}>

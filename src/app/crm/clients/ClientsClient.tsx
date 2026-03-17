@@ -1,11 +1,12 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import type { Lead } from "@/types";
 import { StatusBadge } from "@/components/crm/StatusBadge";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Search, Phone, MapPin, Calendar, UserCheck } from "lucide-react";
+import { PaginationBar } from "@/components/crm/PaginationBar";
 import { format, parseISO } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -14,6 +15,8 @@ interface Props { clients: Lead[]; }
 export function ClientsClient({ clients: initialClients }: Props) {
   const router = useRouter();
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
 
   const filtered = useMemo(() => {
     if (!search) return initialClients;
@@ -26,6 +29,13 @@ export function ClientsClient({ clients: initialClients }: Props) {
         l.contact.ville.toLowerCase().includes(q)
     );
   }, [initialClients, search]);
+
+  useEffect(() => { setPage(1); }, [search]);
+
+  const paginated = useMemo(
+    () => filtered.slice((page - 1) * pageSize, page * pageSize),
+    [filtered, page, pageSize]
+  );
 
   return (
     <div className="space-y-5">
@@ -69,7 +79,7 @@ export function ClientsClient({ clients: initialClients }: Props) {
                   </tr>
                 </thead>
                 <tbody>
-                  {filtered.map((client) => (
+                  {paginated.map((client) => (
                     <tr
                       key={client.id}
                       className="border-b border-border/50 hover:bg-accent/30 transition-colors cursor-pointer"
@@ -113,7 +123,7 @@ export function ClientsClient({ clients: initialClients }: Props) {
 
             {/* Mobile cards */}
             <div className="sm:hidden divide-y divide-border">
-              {filtered.map((client) => (
+              {paginated.map((client) => (
                 <div
                   key={client.id}
                   className="p-4 hover:bg-accent/30 transition-colors cursor-pointer"
@@ -149,6 +159,15 @@ export function ClientsClient({ clients: initialClients }: Props) {
               ))}
             </div>
           </>
+        )}
+        {filtered.length > 0 && (
+          <PaginationBar
+            total={filtered.length}
+            page={page}
+            pageSize={pageSize}
+            onPageChange={setPage}
+            onPageSizeChange={setPageSize}
+          />
         )}
       </Card>
     </div>

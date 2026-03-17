@@ -31,8 +31,20 @@ export function readJson<T>(filename: string, defaultValue: T): T {
 export function writeJson<T>(filename: string, data: T): void {
   ensureDataDir();
   const filePath = getFilePath(filename);
-  // Write to a temp file first, then rename (atomic write)
+  const content = JSON.stringify(data, null, 2);
   const tmpPath = filePath + ".tmp";
-  fs.writeFileSync(tmpPath, JSON.stringify(data, null, 2), "utf-8");
-  fs.renameSync(tmpPath, filePath);
+
+  fs.writeFileSync(tmpPath, content, "utf-8");
+
+  // On Windows, renameSync over an existing file can fail with EPERM
+  // (e.g. antivirus holding a lock). Delete the target first, then rename.
+  // If that still fails, fall back to a direct write.
+  try {
+    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    fs.renameSync(tmpPath, filePath);
+  } catch {
+    // Fallback: write directly and clean up tmp
+    fs.writeFileSync(filePath, content, "utf-8");
+    try { fs.unlinkSync(tmpPath); } catch { /* ignore */ }
+  }
 }

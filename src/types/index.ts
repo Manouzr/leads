@@ -124,7 +124,7 @@ export interface User {
 export interface Lead {
   id: string;
   createdAt: string;
-  source: "landing" | "manuel";
+  source: "landing" | "manuel" | "import";
   status: LeadStatus;
   clientStatus?: ClientStatus;
   assignedTelePro: string;
