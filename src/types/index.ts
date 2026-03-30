@@ -27,8 +27,9 @@ export type ClientStatus =
   | "TERMINÉ PAYÉ";
 
 export const ALL_STATUSES: LeadStatus[] = [
-  "RDV", "EN COURS", "À TRAITER", "À RAPPELER", "À DÉCALER", "EN ATTENTE", "R2",
-  "NRP", "PAS INTÉRESSÉ", "NÉGATIF", "INFINANÇABLE", "FAUX NUMÉRO", "ANNULÉ", "DOUBLON", "PORTE",
+  "RDV", "NÉGATIF", "NRP", "À TRAITER",
+  "EN COURS", "À RAPPELER", "À DÉCALER", "EN ATTENTE", "R2",
+  "PAS INTÉRESSÉ", "INFINANÇABLE", "FAUX NUMÉRO", "ANNULÉ", "DOUBLON", "PORTE",
   "SIGNÉ",
 ];
 
