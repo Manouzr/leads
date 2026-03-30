@@ -13,7 +13,8 @@ export type LeadStatus =
   | "NRP"
   | "PAS INTÉRESSÉ"
   | "R2"
-  | "PORTE";
+  | "PORTE"
+  | "RDV";
 
 export type ClientStatus =
   | "CONTRÔLE QUALITÉ"
@@ -26,9 +27,9 @@ export type ClientStatus =
   | "TERMINÉ PAYÉ";
 
 export const ALL_STATUSES: LeadStatus[] = [
-  "À DÉCALER", "À RAPPELER", "ANNULÉ", "À TRAITER", "EN ATTENTE", "EN COURS",
-  "NÉGATIF", "SIGNÉ", "DOUBLON", "FAUX NUMÉRO", "INFINANÇABLE",
-  "NRP", "PAS INTÉRESSÉ", "R2", "PORTE",
+  "RDV", "EN COURS", "À TRAITER", "À RAPPELER", "À DÉCALER", "EN ATTENTE", "R2",
+  "NRP", "PAS INTÉRESSÉ", "NÉGATIF", "INFINANÇABLE", "FAUX NUMÉRO", "ANNULÉ", "DOUBLON", "PORTE",
+  "SIGNÉ",
 ];
 
 export const ALL_CLIENT_STATUSES: ClientStatus[] = [
@@ -55,6 +56,7 @@ export function getStatusStyle(status: string): { bg: string; text: string; bord
     "PAS INTÉRESSÉ":           { bg: "bg-red-100",       text: "text-red-700",     border: "border-red-300" },
     "R2":                      { bg: "bg-yellow-100",    text: "text-yellow-700",  border: "border-yellow-300" },
     "PORTE":                   { bg: "bg-[#944022]",     text: "text-white",       border: "border-[#944022]" },
+    "RDV":                     { bg: "bg-emerald-500",   text: "text-white",       border: "border-emerald-600" },
     // Client statuses
     "CONTRÔLE QUALITÉ":        { bg: "bg-amber-100",     text: "text-amber-700",   border: "border-amber-300" },
     "MANQUE DOCUMENT":         { bg: "bg-orange-100",    text: "text-orange-700",  border: "border-orange-300" },

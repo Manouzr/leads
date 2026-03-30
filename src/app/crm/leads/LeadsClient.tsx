@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useMemo, useEffect, useRef } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import type { Lead, LeadStatus, UserRole } from "@/types";
-import { ALL_STATUSES } from "@/types";
+import { ALL_STATUSES, getStatusStyle } from "@/types";
 import { StatusBadge } from "@/components/crm/StatusBadge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -93,6 +93,10 @@ export function LeadsClient({ leads: initialLeads, userNames, telepros, commerci
     if (filterTelePro !== "tous") result = result.filter((l) => l.assignedTelePro === filterTelePro);
     if (filterCommercial !== "tous") result = result.filter((l) => l.assignedCommercial === filterCommercial);
     if (filterDepts.size > 0) result = result.filter((l) => filterDepts.has(getDept(l.contact.codePostal)));
+    // Always sort by status order
+    result = [...result].sort(
+      (a, b) => ALL_STATUSES.indexOf(a.status) - ALL_STATUSES.indexOf(b.status)
+    );
     return result;
   }, [leads, search, filterStatus, filterSource, filterDate, filterTelePro, filterCommercial, filterDepts]);
 
@@ -450,9 +454,27 @@ export function LeadsClient({ leads: initialLeads, userNames, telepros, commerci
                   </td>
                 </tr>
               ) : (
-                paginated.map((lead) => (
+                paginated.map((lead, i) => {
+                  const prevLead = paginated[i - 1];
+                  const isNewGroup = !prevLead || prevLead.status !== lead.status;
+                  const groupCount = filtered.filter((l) => l.status === lead.status).length;
+                  const style = getStatusStyle(lead.status);
+                  const colSpan = role === "admin" ? 10 : 7;
+                  return (
+                  <React.Fragment key={lead.id}>
+                    {isNewGroup && (
+                      <tr key={`group-${lead.status}`} className="bg-muted/20 border-b border-border">
+                        <td colSpan={colSpan} className="px-4 py-1.5">
+                          <div className="flex items-center gap-2">
+                            <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold border ${style.bg} ${style.text} ${style.border}`}>
+                              {lead.status}
+                            </span>
+                            <span className="text-xs text-muted-foreground">{groupCount} lead{groupCount > 1 ? "s" : ""}</span>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
                   <tr
-                    key={lead.id}
                     className={`border-b border-border/50 hover:bg-accent/30 transition-colors ${selectedIds.has(lead.id) ? "bg-primary/5" : ""}`}
                   >
                     {role === "admin" && (
@@ -514,7 +536,9 @@ export function LeadsClient({ leads: initialLeads, userNames, telepros, commerci
                       )}
                     </td>
                   </tr>
-                ))
+                  </React.Fragment>
+                  );
+                })
               )}
             </tbody>
           </table>
