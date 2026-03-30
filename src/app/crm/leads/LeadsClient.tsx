@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import type { Lead, LeadStatus, UserRole } from "@/types";
 import { ALL_STATUSES } from "@/types";
@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, Plus, Filter, Phone, MapPin, Calendar, CheckSquare, Square, Upload, Trash2 } from "lucide-react";
+import { Search, Plus, Filter, Phone, MapPin, Calendar, CheckSquare, Square, Upload, Trash2, ChevronDown } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { format, parseISO } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -37,6 +37,11 @@ export function LeadsClient({ leads: initialLeads, userNames, telepros, commerci
   const [filterDate, setFilterDate] = useState("");
   const [filterTelePro, setFilterTelePro] = useState<string>("tous");
   const [filterCommercial, setFilterCommercial] = useState<string>("tous");
+  const [filterDepts, setFilterDepts] = useState<Set<string>>(new Set());
+  const [deptDropdownOpen, setDeptDropdownOpen] = useState(false);
+  const deptDropdownRef = useRef<HTMLDivElement>(null);
+  const deptButtonRef = useRef<HTMLButtonElement>(null);
+  const [deptRect, setDeptRect] = useState<{ top: number; bottom: number; left: number; width: number } | null>(null);
   const [showImport, setShowImport] = useState(false);
   const [showNewLead, setShowNewLead] = useState(false);
   const [creating, setCreating] = useState(false);
@@ -46,6 +51,28 @@ export function LeadsClient({ leads: initialLeads, userNames, telepros, commerci
   const [bulkTelepro, setBulkTelepro] = useState<string>("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
+
+  function getDept(codePostal: string): string {
+    const cp = (codePostal || "").replace(/\s/g, "");
+    if (!cp || !/^\d/.test(cp)) return "—";
+    if (cp.startsWith("97") || cp.startsWith("98")) return cp.slice(0, 3);
+    return cp.slice(0, 2).padStart(2, "0");
+  }
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (deptDropdownRef.current && !deptDropdownRef.current.contains(e.target as Node)) {
+        setDeptDropdownOpen(false);
+      }
+    }
+    if (deptDropdownOpen) document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [deptDropdownOpen]);
+
+  const allDepts = useMemo(() => {
+    const set = new Set(leads.map((l) => getDept(l.contact.codePostal)));
+    return Array.from(set).filter((d) => d !== "—").sort();
+  }, [leads]);
 
   const filtered = useMemo(() => {
     let result = leads;
@@ -65,11 +92,12 @@ export function LeadsClient({ leads: initialLeads, userNames, telepros, commerci
     if (filterDate) result = result.filter((l) => l.rendezVous?.date === filterDate);
     if (filterTelePro !== "tous") result = result.filter((l) => l.assignedTelePro === filterTelePro);
     if (filterCommercial !== "tous") result = result.filter((l) => l.assignedCommercial === filterCommercial);
+    if (filterDepts.size > 0) result = result.filter((l) => filterDepts.has(getDept(l.contact.codePostal)));
     return result;
-  }, [leads, search, filterStatus, filterSource, filterDate, filterTelePro, filterCommercial]);
+  }, [leads, search, filterStatus, filterSource, filterDate, filterTelePro, filterCommercial, filterDepts]);
 
   // Reset to page 1 whenever filters change
-  useEffect(() => { setPage(1); }, [search, filterStatus, filterSource, filterDate, filterTelePro, filterCommercial]);
+  useEffect(() => { setPage(1); }, [search, filterStatus, filterSource, filterDate, filterTelePro, filterCommercial, filterDepts]);
 
   const paginated = useMemo(
     () => filtered.slice((page - 1) * pageSize, page * pageSize),
@@ -233,8 +261,84 @@ export function LeadsClient({ leads: initialLeads, userNames, telepros, commerci
                   </SelectContent>
                 </Select>
               )}
-              {(search || filterStatus !== "tous" || filterSource !== "tous" || filterDate || filterTelePro !== "tous" || filterCommercial !== "tous") && (
-                <Button variant="ghost" size="sm" onClick={() => { setSearch(""); setFilterStatus("tous"); setFilterSource("tous"); setFilterDate(""); setFilterTelePro("tous"); setFilterCommercial("tous"); }}>
+              {/* Department filter dropdown */}
+              {allDepts.length > 0 && (
+                <div className="relative w-full sm:w-auto" ref={deptDropdownRef}>
+                  <button
+                    ref={deptButtonRef}
+                    type="button"
+                    onClick={() => {
+                      const rect = deptButtonRef.current?.getBoundingClientRect();
+                      if (rect) setDeptRect({ top: rect.top, bottom: rect.bottom, left: rect.left, width: rect.width });
+                      setDeptDropdownOpen((v) => !v);
+                    }}
+                    className={`w-full sm:w-auto inline-flex items-center gap-1.5 h-10 px-3 rounded-md border text-sm transition-colors ${
+                      filterDepts.size > 0
+                        ? "border-amber-400 bg-amber-50/10 text-amber-700"
+                        : "border-input bg-background text-muted-foreground hover:border-amber-300"
+                    }`}
+                  >
+                    <MapPin className="w-3.5 h-3.5 shrink-0" />
+                    <span>{filterDepts.size > 0 ? `${filterDepts.size} département${filterDepts.size > 1 ? "s" : ""}` : "Département"}</span>
+                    <ChevronDown className={`w-3.5 h-3.5 shrink-0 ml-auto sm:ml-0 transition-transform ${deptDropdownOpen ? "rotate-180" : ""}`} />
+                  </button>
+                  {deptDropdownOpen && deptRect && (
+                    <div
+                      style={{
+                        position: "fixed",
+                        top: deptRect.top - 4,
+                        left: deptRect.left,
+                        width: Math.max(220, deptRect.width),
+                        transform: "translateY(-100%)",
+                        zIndex: 9999,
+                      }}
+                      className="bg-card border border-border rounded-lg shadow-xl p-3 max-h-72 overflow-y-auto"
+                    >
+                      <div className="flex items-center justify-between mb-2 pb-2 border-b border-border">
+                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Départements</span>
+                        <button
+                          type="button"
+                          onClick={() => setFilterDepts(filterDepts.size === allDepts.length ? new Set() : new Set(allDepts))}
+                          className="text-xs text-amber-600 hover:text-amber-500 underline underline-offset-2"
+                        >
+                          {filterDepts.size === allDepts.length ? "Tout décocher" : "Tout cocher"}
+                        </button>
+                      </div>
+                      <div className="flex flex-col">
+                        {allDepts.map((dept) => {
+                          const count = leads.filter((l) => getDept(l.contact.codePostal) === dept).length;
+                          const checked = filterDepts.has(dept);
+                          return (
+                            <button
+                              key={dept}
+                              type="button"
+                              onClick={() =>
+                                setFilterDepts((prev) => {
+                                  const next = new Set(prev);
+                                  if (next.has(dept)) next.delete(dept);
+                                  else next.add(dept);
+                                  return next;
+                                })
+                              }
+                              className={`flex items-center gap-2.5 w-full px-2 py-1.5 rounded text-sm text-left transition-colors ${
+                                checked ? "bg-amber-50/20 text-amber-700" : "text-foreground hover:bg-accent/30"
+                              }`}
+                            >
+                              <span className={`w-4 h-4 shrink-0 rounded border flex items-center justify-center ${checked ? "bg-amber-500 border-amber-500" : "border-muted-foreground/40"}`}>
+                                {checked && <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 10 10"><path d="M1.5 5l2.5 2.5 4.5-4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+                              </span>
+                              <span className="font-mono font-medium">Dép. {dept}</span>
+                              <span className="text-xs text-muted-foreground ml-auto">({count})</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+              {(search || filterStatus !== "tous" || filterSource !== "tous" || filterDate || filterTelePro !== "tous" || filterCommercial !== "tous" || filterDepts.size > 0) && (
+                <Button variant="ghost" size="sm" onClick={() => { setSearch(""); setFilterStatus("tous"); setFilterSource("tous"); setFilterDate(""); setFilterTelePro("tous"); setFilterCommercial("tous"); setFilterDepts(new Set()); setDeptDropdownOpen(false); }}>
                   <Filter className="w-4 h-4 mr-1" /> Réinitialiser
                 </Button>
               )}

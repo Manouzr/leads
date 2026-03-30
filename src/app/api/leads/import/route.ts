@@ -12,10 +12,11 @@ interface ImportRow {
   telephone: string;
   codePostal: string;
   ville: string;
+  statut?: LeadStatus;
 }
 
 export async function POST(req: NextRequest) {
-  const { rows, status }: { rows: ImportRow[]; status: LeadStatus } = await req.json();
+  const { rows }: { rows: ImportRow[] } = await req.json();
 
   const leads = readJson<Lead[]>("leads.json", []);
   const created: Lead[] = [];
@@ -27,7 +28,7 @@ export async function POST(req: NextRequest) {
         ? new Date(row.dateAcquisition).toISOString()
         : new Date().toISOString(),
       source: "import",
-      status: status || "À TRAITER",
+      status: row.statut || "À TRAITER",
       clientStatus: undefined,
       assignedTelePro: "",
       assignedCommercial: "",
